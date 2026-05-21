@@ -28,6 +28,7 @@ async function run() {
 
     const db = client.db("docAppointmentDB");
     const AppointmentsCollection = db.collection("allDoctorList");
+    const bookingCollection = db.collection("bookings");
 
     app.get("/allDoctorList", async (req, res) => {
       const result = await AppointmentsCollection.find().toArray();
@@ -49,6 +50,13 @@ async function run() {
         .sort({ rating: -1 })
         .limit(4)
         .toArray();
+
+      res.json(result);
+    });
+
+    app.post("/booking", async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingCollection.insertOne(bookingData);
 
       res.json(result);
     });
