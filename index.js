@@ -44,6 +44,15 @@ async function run() {
       res.json(result);
     });
 
+    app.get("/topdoctor", async (req, res) => {
+      const result = await AppointmentsCollection.find()
+        .sort({ rating: -1 })
+        .limit(4)
+        .toArray();
+
+      res.json(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
