@@ -1,7 +1,10 @@
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 dotenv.config();
 const uri = process.env.MONGODB_URI;
 
@@ -19,20 +22,34 @@ const client = new MongoClient(uri, {
   },
 });
 
-app.get("/", (req, res) => {
-  res.send("Server Running");
-});
-
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
+
+    const db = client.db("docAppointmentDB");
+    const AppointmentsCollection = db.collection("allDoctorList");
+
+    app.get("/allDoctorList", async (req, res) => {
+      const result = await AppointmentsCollection.find().toArray();
+      res.json(result);
+    });
+
+    app.get("/allDoctorList/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await AppointmentsCollection.findOne({
+        _id: new ObjectId(id),
+      });
+
+      res.json(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
     );
   } finally {
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
