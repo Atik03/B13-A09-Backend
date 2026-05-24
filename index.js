@@ -70,7 +70,7 @@ async function run() {
     app.get("/topdoctor", async (req, res) => {
       const result = await AppointmentsCollection.find()
         .sort({ rating: -1 })
-        .limit(4)
+        .limit(3)
         .toArray();
 
       res.json(result);
